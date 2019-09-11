@@ -2,12 +2,13 @@
   <div>
     <h3>{{ title }}</h3>
     <div
-      v-for="(filter, i) in filters"
+      v-for="(filter, i) in listFilters"
       :key="i"
     >
       <v-checkbox
-        v-model="filter.active"
-        :label="filter.name"
+        v-model="filtersSelected"
+        :value="filter"
+        :label="filter"
         class="searchfilter_checkbox"
       ></v-checkbox>
       <span class="searchfilter_nbResults">(35)</span>
@@ -26,16 +27,24 @@ export default {
     title: {
       type: String,
       required: true
+    },
+    listFilters: {
+      type: Array,
+      required: true
     }
   },
   data () {
     return {
-      filters: [],
+      filtersSelected: [],
+      allFiltersSelected: [],
       limit: 3
     }
   },
   mounted () {
-    this.filters = JSON.parse(JSON.stringify(this.value))
+    this.allFiltersSelected = JSON.parse(JSON.stringify(this.value))
+    this.filtersSelected = this.allFiltersSelected.filter(filter => (
+      filter.category === this.title && this.listFilters.find(f => f === filter)
+    ))
   }
 }
 </script>

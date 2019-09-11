@@ -12,7 +12,7 @@
         justify-center
         align-center
       >
-        <search-filters v-if="filterCategories.length" v-model="filterCategories" />
+        <search-filters v-if="filterCategories.length" v-model="allFiltersSelected" :categories="filterCategories" />
         <div></div>
       </v-layout>
     </v-flex>
@@ -20,14 +20,22 @@
 </template>
 
 <script>
+import getAllPokemon from '../utils/pokemonAPI.js'
+import categories from '../utils/categories.json'
 import SearchFilters from '../components/SearchFilters.vue'
 
 export default {
+  async asyncData (context) {
+    const allPokemons = await getAllPokemon(25, 0, categories)
+    return { allPokemons }
+  },
   components: {
     SearchFilters
   },
   data () {
     return {
+      allPokemons: [],
+      allFiltersSelected: [],
       filtersModel: [
         {
           active: false,
@@ -46,27 +54,42 @@ export default {
           name: 'Else'
         }
       ],
-      filterCategories: [],
-      filterCategoriesTMP: [
-        {
-          name: 'Type',
-          request: 'type'
-        },
-        {
-          name: 'Color',
-          request: 'pokemon-color'
-        }
-      ]
+      filterCategories: []
     }
   },
   methods: {
-    getFilters () {
-      this.filterCategories = this.filterCategoriesTMP.map(category => ({ ...category, filters: [...this.filtersModel] }))
+    getFilters (allPokemons) {
+      const filtersFunctions = {
+        abilities: (categoryAbilities, pokemon) => {
+          pokemon.abilities.forEach(({ ability }) => {
+            if (!categoryAbilities.filters.includes(ability.name)) {
+              categoryAbilities.filters.push(ability.name)
+            }
+          })
+        },
+        types: (categoryTypes, pokemon) => {
+          pokemon.types.forEach(({ type }) => {
+            if (!categoryTypes.filters.includes(type.name)) {
+              categoryTypes.filters.push(type.name)
+            }
+          })
+        }
+      }
+      this.filterCategories = categories.map(c => ({ name: c, filters: [] }))
+      allPokemons.forEach((pokemon) => {
+        this.filterCategories.forEach((category) => {
+          filtersFunctions[category.name](category, pokemon)
+        })
+      })
       console.log(this.filterCategories)
     }
   },
   mounted () {
-    this.getFilters()
+    getAllPokemon(151 - 25, 25, categories).then((restOfAllPokemons) => {
+      this.allPokemons = this.allPokemons.concat(restOfAllPokemons)
+      console.log(this.allPokemons)
+      this.getFilters(this.allPokemons)
+    })
   }
 }
 </script>

@@ -1,10 +1,11 @@
 <template>
   <div>
     <search-filter
-      v-for="(filterCategory, i) in filterCategories"
+      v-for="(filterCategory, i) in categories"
       :key="i"
       :title="filterCategory.name"
-      v-model="filterCategory.filters"
+      v-model="allFiltersSelected"
+      :listFilters="filterCategory.filters"
     />
   </div>
 </template>
@@ -14,16 +15,17 @@ import SearchFilter from './SearchFilter.vue'
 
 export default {
   props: {
-    value: Array
+    value: Array,
+    categories: Array
   },
   data () {
     return {
-      filterCategories: []
+      allFiltersSelected: []
     }
   },
   mounted () {
     console.log(this.value)
-    this.filterCategories = JSON.parse(JSON.stringify(this.value))
+    this.allFiltersSelected = JSON.parse(JSON.stringify(this.value))
   },
   components: {
     SearchFilter
