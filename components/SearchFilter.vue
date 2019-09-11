@@ -7,13 +7,13 @@
     >
       <v-checkbox
         v-model="filtersSelected"
-        :value="filter"
-        :label="filter"
+        :value="filter.filter"
+        :label="filter.filter.substr(0, 12)"
         class="searchfilter_checkbox"
-      ></v-checkbox>
-      <span class="searchfilter_nbResults">(35)</span>
+      />
+      <span class="searchfilter_nbResults">({{ filter.count }})</span>
     </div>
-    <v-divider></v-divider>
+    <v-divider />
   </div>
 </template>
 
@@ -43,7 +43,7 @@ export default {
   mounted () {
     this.allFiltersSelected = JSON.parse(JSON.stringify(this.value))
     this.filtersSelected = this.allFiltersSelected.filter(filter => (
-      filter.category === this.title && this.listFilters.find(f => f === filter)
+      filter.category === this.title && this.listFilters.find(f => f === filter.name)
     ))
   }
 }
