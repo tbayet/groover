@@ -1,6 +1,12 @@
 <template>
   <v-layout justify-center row>
-    <v-flex xs8>
+    <v-flex xs4>
+      <v-checkbox
+        v-model="exclusiveFiltering"
+        label="Exclusive Filter"
+      />
+    </v-flex>
+    <v-flex xs4>
       <v-text-field
         v-model="searchText"
         outlined
@@ -69,6 +75,8 @@ export default {
   },
   data () {
     return {
+      // Look for Intersection and not Union between Categories when :true
+      exclusiveFiltering: true,
       searchText: '',
       sortSelected: 'relevant',
       sortFunctions: {
@@ -100,8 +108,25 @@ export default {
     },
     filterPokemons (allPokemons, filters) {
       let res
+      let categories = []
+      if (this.exclusiveFiltering) {
+        categories = Object.keys(categoriesList).filter((keyCategory) => {
+          if (filters.find(f => f.category === keyCategory)) {
+            return true
+          }
+          return false
+        })
+      }
       if (filters.length === 0) {
         res = allPokemons
+      } else if (this.exclusiveFiltering) {
+        res = allPokemons.filter(pokemon => (
+          categories.reduce((acc, cat) => (
+            filters.find(filter => (filter.category === cat &&
+              categoriesList[filter.category].get(pokemon).includes(filter.filter)
+            )) ? acc + 1 : acc
+          ), 0) >= categories.length)
+        )
       } else {
         res = allPokemons.filter(pokemon => (
           filters.find(filter => (

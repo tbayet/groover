@@ -26,7 +26,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import { mapMutations, mapState } from 'vuex'
 import getAllPokemon from '../utils/pokemonAPI.js'
 import categoriesList from '../utils/categories.js'
@@ -40,25 +39,10 @@ export default {
   },
   data () {
     return {
-      allFiltersSelected: [],
-      filtersModel: [
-        {
-          active: false,
-          name: 'Autres'
-        },
-        {
-          active: false,
-          name: 'Chanson'
-        },
-        {
-          active: false,
-          name: 'Electronic'
-        },
-        {
-          active: false,
-          name: 'Else'
-        }
-      ]
+      /** Contains all selected filters
+       * [{ category: <String>, filter: <String> }]
+       */
+      allFiltersSelected: []
     }
   },
   computed: {
@@ -67,14 +51,18 @@ export default {
       filters: state => state.filters.list
     })
   },
+  // get the 25 firts pokemons on server-side
   async asyncData ({ $axios }) {
-    const allPokemons = await getAllPokemon(true, $axios.$get, 25, 0, Object.keys(categoriesList))
+    const allPokemons = await getAllPokemon($axios.$get, 25, 0, Object.keys(categoriesList))
     return { allPokemons }
   },
-  mounted () {
+  created () {
     this.setPokemons(this.allPokemons)
     this.setFilters(this.getFilters(this.allPokemons))
-    getAllPokemon(false, axios.get, 151 - 25, 25, Object.keys(categoriesList)).then((restOfAllPokemons) => {
+  },
+  // get the rest of the 151 pokemons on client-side and merge it
+  mounted () {
+    getAllPokemon(this.$axios.$get, 151 - 25, 25, Object.keys(categoriesList)).then((restOfAllPokemons) => {
       this.setPokemons(this.allPokemons.concat(restOfAllPokemons))
       this.setFilters(this.getFilters(this.pokemons))
     })
@@ -84,6 +72,7 @@ export default {
       setPokemons: 'pokemons/set',
       setFilters: 'filters/set'
     }),
+    // Feed the filter categories from datas and count their respective population
     getFilters (allPokemons) {
       const filterCategories = Object.keys(categoriesList).map(c => ({ name: c, filters: [] }))
       allPokemons.forEach((pokemon) => {

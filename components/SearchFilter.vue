@@ -45,6 +45,7 @@ export default {
   },
   computed: {
   },
+  // wedon't need to recalcul filtersSelected as long as they are scoped in their own component instance
   mounted () {
     this.filtersSelected = this.value.filter(filter => (
       filter.category === this.title && this.listFilters.find(f => f === filter.name)
