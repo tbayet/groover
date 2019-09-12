@@ -40,7 +40,6 @@ export default {
   },
   data () {
     return {
-      // allPokemons: [],
       allFiltersSelected: [],
       filtersModel: [
         {
@@ -73,7 +72,7 @@ export default {
     return { allPokemons }
   },
   mounted () {
-    this.setPokemons(this.pokemons)
+    this.setPokemons(this.allPokemons)
     this.setFilters(this.getFilters(this.allPokemons))
     getAllPokemon(false, axios.get, 151 - 25, 25, Object.keys(categoriesList)).then((restOfAllPokemons) => {
       this.setPokemons(this.allPokemons.concat(restOfAllPokemons))

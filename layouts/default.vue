@@ -3,15 +3,15 @@
     <v-app-bar
       app
     >
-      <v-toolbar-title v-text="title" />
+      <v-toolbar-title large v-text="title" />
       <v-spacer />
-      <v-btn>
+      <v-btn text>
         Become an Influencer
       </v-btn>
-      <v-btn>
+      <v-btn text>
         Log In
       </v-btn>
-      <v-btn>
+      <v-btn outlined color="orange">
         Sign up
       </v-btn>
     </v-app-bar>
@@ -27,18 +27,6 @@
 export default {
   data () {
     return {
-      items: [
-        {
-          icon: 'mdi-apps',
-          title: 'Welcome',
-          to: '/'
-        },
-        {
-          icon: 'mdi-chart-bubble',
-          title: 'Inspire',
-          to: '/inspire'
-        }
-      ],
       title: 'Groover'
     }
   }
