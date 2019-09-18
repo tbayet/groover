@@ -1,5 +1,3 @@
-import colors from 'vuetify/es5/util/colors'
-
 export default {
   mode: 'universal',
   /*
@@ -57,7 +55,6 @@ export default {
   ** https://github.com/nuxt-community/vuetify-module
   */
   vuetify: {
-    customVariables: ['~/assets/variables.scss'],
     theme: { disable: true }
   },
   /*
